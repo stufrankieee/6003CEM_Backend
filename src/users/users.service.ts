@@ -1,11 +1,12 @@
 import { AuthUserDto } from './dto/auth-user.dto';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm/dist';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { error } from 'console';
 
 const saltRounds = 10;
 @Injectable()
@@ -22,32 +23,41 @@ export class UsersService {
     });
 
     if (user == null) {
-      throw new BadRequestException('user not exist');
+      throw new HttpException({
+        status: HttpStatus.FORBIDDEN,
+        error: 'The username is not exist.',
+      }, HttpStatus.FORBIDDEN);
     }
     const verified = await bcrypt.compare(authUserDto.password, user.password);
 
     if (!verified) {
-      throw new BadRequestException('password wrong');
+      throw new HttpException({
+        status: HttpStatus.FORBIDDEN,
+        error: 'The login password is incorrect.',
+      }, HttpStatus.FORBIDDEN);
     }
 
     return true;
   }
 
   async create(createUserDto: CreateUserDto) {
-    const hashedPassword = await bcrypt.hash(
-      createUserDto.password,
-      saltRounds,
-    );
+    console.log("User Password" + createUserDto);
+    if (createUserDto.password === undefined) {
+      const hashedPassword = await bcrypt.hash(
+        createUserDto.password,
+        saltRounds,
+      );
 
-    const user: User = {
-      id: null,
-      firstName: createUserDto.firstName,
-      lastName: createUserDto.lastName,
-      username: createUserDto.username,
-      password: hashedPassword,
-    };
+      const user: User = {
+        id: null,
+        firstName: createUserDto.firstName,
+        lastName: createUserDto.lastName,
+        username: createUserDto.username,
+        password: hashedPassword,
+      };
 
-    return await this.usersRepository.save(user);
+      return await this.usersRepository.save(user);
+    }
   }
 
   async update(updateUserDto: UpdateUserDto) {
