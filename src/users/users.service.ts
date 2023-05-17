@@ -23,26 +23,18 @@ export class UsersService {
     });
 
     if (user == null) {
-      throw new HttpException({
-        status: HttpStatus.FORBIDDEN,
-        error: 'The username is not exist.',
-      }, HttpStatus.FORBIDDEN);
+      throw new HttpException('The username is not exist.', HttpStatus.FORBIDDEN);
     }
     const verified = await bcrypt.compare(authUserDto.password, user.password);
 
     if (!verified) {
-      throw new HttpException({
-        status: HttpStatus.FORBIDDEN,
-        error: 'The login password is incorrect.',
-      }, HttpStatus.FORBIDDEN);
+      throw new HttpException('The login password is incorrect.', HttpStatus.FORBIDDEN);
     }
 
     return true;
   }
 
   async create(createUserDto: CreateUserDto) {
-    console.log("User Password" + createUserDto);
-    if (createUserDto.password === undefined) {
       const hashedPassword = await bcrypt.hash(
         createUserDto.password,
         saltRounds,
@@ -57,7 +49,6 @@ export class UsersService {
       };
 
       return await this.usersRepository.save(user);
-    }
   }
 
   async update(updateUserDto: UpdateUserDto) {

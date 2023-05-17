@@ -2,11 +2,26 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class CreatePetDto {
     @ApiProperty()
-    name: string;
+    petName: string;
 
     @ApiProperty()
-    age: number;
+    dateOfBirth: Date;
     
     @ApiProperty()
     breed: string;
+
+    @ApiProperty()
+    microchipNo: number;
+
+    @ApiProperty()
+    gender: string;
+
+    @ApiProperty()
+    intake: string;
+
+    @ApiProperty()
+    remark: string;
+
+    @ApiProperty()
+    introduction: string;
 }
