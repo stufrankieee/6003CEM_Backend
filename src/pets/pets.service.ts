@@ -15,19 +15,31 @@ export class PetsService {
     return this.petsRepository.save(createPetDto);
   }
 
+  async update(updatePetDto: UpdatePetDto) {
+    const pet: Pet = {
+      id: updatePetDto.id,
+      petName: updatePetDto.petName,
+      dateOfBirth: updatePetDto.dateOfBirth,
+      breed: updatePetDto.breed,
+      microchipNo: updatePetDto.microchipNo,
+      gender: updatePetDto.gender,
+      intake: updatePetDto.intake,
+      remark: updatePetDto.remark,
+      introduction: updatePetDto.introduction,
+    };
+
+    return await this.petsRepository.save(pet);
+  }
+
+  async remove(id: number) {
+    return await this.petsRepository.delete(+id);
+  }
+
   findAll() {
     return `This action returns all pets`;
   }
 
   findOne(id: number) {
     return `This action returns a #${id} pet`;
-  }
-
-  async update(id: number, updatePetDto: UpdatePetDto) {
-    return `This action updates a #${id} pet`;
-  }
-
-  async remove(id: number) {
-    return `This action removes a #${id} pet`;
   }
 }
