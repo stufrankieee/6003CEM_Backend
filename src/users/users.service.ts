@@ -7,6 +7,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { error } from 'console';
+import { JwtService } from '@nestjs/jwt';
 
 const saltRounds = 10;
 @Injectable()
@@ -14,8 +15,9 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private jwtService: JwtService
   ) {}
-  async auth(authUserDto: AuthUserDto): Promise<boolean> {
+  async auth(authUserDto: AuthUserDto) {
     const user = await this.usersRepository.findOne({
       where: {
         username: authUserDto.username,
@@ -31,7 +33,15 @@ export class UsersService {
       throw new HttpException('The login password is incorrect.', HttpStatus.FORBIDDEN);
     }
 
-    return true;
+    const payload = {
+      username: user.username,
+      userId: user.id,
+    };
+
+    return {
+      accessToken: await this.jwtService.signAsync(payload),
+      data: payload,
+    };
   }
 
   async create(createUserDto: CreateUserDto) {

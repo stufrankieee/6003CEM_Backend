@@ -36,10 +36,14 @@ export class PetsService {
   }
 
   findAll() {
-    return `This action returns all pets`;
+    return this.petsRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} pet`;
+    return this.petsRepository.findOne({
+      where: {
+        id
+      }
+    });
   }
 }

@@ -11,6 +11,8 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
 
+  app.enableCors()
+
   const options: SwaggerDocumentOptions = {
     deepScanRoutes: true,
   };
