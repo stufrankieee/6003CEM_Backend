@@ -3,7 +3,7 @@ import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Pet } from './entities/pet.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 @Injectable()
 export class PetsService {
@@ -35,8 +35,19 @@ export class PetsService {
     return await this.petsRepository.delete(+id);
   }
 
-  findAll() {
-    return this.petsRepository.find();
+  findAll(petName: string, breed: string) {
+    const where: any = {};
+    if (petName) {
+      where.petName = Like(`%${petName}%`);
+    }
+
+    if (breed) {
+      where.breed = Like(`%${breed}%`);
+    }
+
+    return this.petsRepository.find({
+      where
+    });
   }
 
   findOne(id: number) {
